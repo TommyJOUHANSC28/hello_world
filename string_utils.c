@@ -188,7 +188,24 @@ char *_strtok(char *str, const char *delim)
 
 	return (start);
 }
+/* ===================== STRSTR ===================== */
 
+char *_strstr(const char *h, const char *n)
+{
+    size_t i, j;
+
+    if (!*n)
+        return ((char *)h);
+
+    for (i = 0; h[i]; i++)
+    {
+        for (j = 0; n[j] && h[i + j] == n[j]; j++)
+            ;
+        if (!n[j])
+            return ((char *)(h + i));
+    }
+    return (NULL);
+}
 /* ===================== REALLOC ===================== */
 
 void *_realloc(void *ptr, size_t old_size, size_t new_size)

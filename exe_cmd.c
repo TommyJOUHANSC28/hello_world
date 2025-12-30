@@ -34,6 +34,26 @@ if (_strcmp(av[0], "env") == 0)
 builtin_env(envp);
 goto clean;
 }
+if (_strchr(cmd, ';'))
+{
+handle_semicolon(cmd, envp);
+goto clean;
+}
+if (_strstr(cmd, "&&") || _strstr(cmd, "||"))
+{
+handle_logical(cmd, envp);
+goto clean;
+}
+if (_strcmp(av[0], "alias") == 0)
+{
+builtin_alias(av);
+goto clean;
+}
+if (_strcmp(av[0], "history") == 0)
+{
+builtin_history();
+goto clean;
+}
 path = find_in_path(av[0], envp);
 if (!path)
 {

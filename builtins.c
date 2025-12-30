@@ -26,20 +26,24 @@ int builtin_cd(char **av)
 {
 char *oldpwd;
 char *newpwd;
+char *target;
 char *args[4];
 oldpwd = _getcwd();
 if (!oldpwd)
 return (1);
 if (!av[1])
+target = _getenv("HOME", environ);
+/* cd - → OLDPWD */
+else if (_strcmp(av[1], "-") == 0)
 {
-if (chdir(_getenv("HOME", environ)) == -1)
-{
-perror("cd");
-free(oldpwd);
-return (1);
+target = _getenv("OLDPWD", environ);
+if (target)
+write(1, target, _strlen(target));
+write(1, "\n", 1);
 }
-}
-else if (chdir(av[1]) == -1)
+else
+target = av[1];
+if (!target || chdir(target) == -1)
 {
 perror("cd");
 free(oldpwd);
@@ -65,16 +69,50 @@ free(oldpwd);
 free(newpwd);
 return (0);
 }
-/**
- * builtin_exit - Quitter proprement simple shell
- * @envp: tableau de la sortie
- *
- * Return: 0 en cas de succès
- */
-int builtin_exit(char **av)
+void builtin_alias(char **av)
 {
-int status = 0;
-if (av[1])
-status = _atoi(av[1]);
-exit(status);
+alias_t *tmp;
+int i;
+if (!av[1])
+{
+tmp = alias_list;
+while (tmp)
+{
+print_alias(tmp);
+tmp = tmp->next;
+}
+return;
+}
+for (i = 1; av[i]; i++)
+{
+char *eq = _strchr(av[i], '=');
+if (eq)
+{
+*eq = '\0';
+set_alias(av[i], eq + 1);
+}
+else
+{
+tmp = alias_list;
+while (tmp)
+{
+if (_strcmp(tmp->name, av[i]) == 0)
+print_alias(tmp);
+tmp = tmp->next;
+}
+}
+}
+}
+void builtin_history(void)
+{
+    int i;
+    char buf[16];
+
+    for (i = 0; i < hist_count; i++)
+    {
+        snprintf(buf, sizeof(buf), "%d ", i);
+        write(1, buf, _strlen(buf));
+        write(1, history[i], _strlen(history[i]));
+        write(1, "\n", 1);
+    }
 }
