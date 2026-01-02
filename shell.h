@@ -37,7 +37,7 @@ char **split_line(char *line);
 int exe_cmd(char *cmd, char **envp);
 char *find_in_path(char *cmd, char **envp);
 void handle_exit(char **av);
-int builtin_env(char **envp);
+int builtin_env(char **av);
 char *_strchr(const char *s, char c);
 char *_strdup(const char *str);
 int _strncmp(const char *s1, const char *s2, size_t n);

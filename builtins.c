@@ -5,14 +5,14 @@
  *
  * Return: 0 en cas de succès
  */
-int builtin_env(char **envp)
+int builtin_env(char **av)
 {
-int i = 0;
-while (envp && envp[i])
+int i;
+(void)av;
+for (i = 0; environ[i]; i++)
 {
-write(1, envp[i], _strlen(envp[i]));
+write(1, environ[i], _strlen(environ[i]));
 write(1, "\n", 1);
-i++;
 }
 return (0);
 }
@@ -30,11 +30,11 @@ oldpwd = _getcwd();
 if (!oldpwd)
 return (1);
 if (!av[1])
-target = _getenv("HOME", environ);
+target = _getenv("HOME");
 /* cd - → OLDPWD */
 else if (_strcmp(av[1], "-") == 0)
 {
-target = _getenv("OLDPWD", environ);
+target = _getenv("OLDPWD");
 if (target)
 write(1, target, _strlen(target));
 write(1, "\n", 1);
@@ -55,9 +55,9 @@ return (1);
 }
 /* OLDPWD */
 args[0] = "setenv";
+args[3] = NULL;
 args[1] = "OLDPWD";
 args[2] = oldpwd;
-args[3] = NULL;
 _setenv(args);
 /* PWD */
 args[1] = "PWD";
@@ -73,12 +73,8 @@ alias_t *tmp;
 int i;
 if (!av[1])
 {
-tmp = alias_list;
-while (tmp)
-{
+for (tmp = alias_list; tmp; tmp = tmp->next)
 print_alias(tmp);
-tmp = tmp->next;
-}
 return;
 }
 for (i = 1; av[i]; i++)
@@ -103,14 +99,13 @@ tmp = tmp->next;
 }
 void builtin_history(void)
 {
-    int i;
-    char buf[16];
-
-    for (i = 0; i < hist_count; i++)
-    {
-        snprintf(buf, sizeof(buf), "%d ", i);
-        write(1, buf, _strlen(buf));
-        write(1, history[i], _strlen(history[i]));
-        write(1, "\n", 1);
-    }
+int i;
+char buf[32];
+for (i = 0; i < hist_count; i++)
+{
+snprintf(buf, sizeof(buf), "%d ", i);
+write(1, buf, _strlen(buf));
+write(1, history[i], _strlen(history[i]));
+write(1, "\n", 1);
+}
 }
