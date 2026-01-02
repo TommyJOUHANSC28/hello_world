@@ -1,8 +1,9 @@
 #include "shell.h"
 /**
-* expand_pid - PID du shell
-* @line: pointeur line
-* Return : $$
+* expand_pid - remplace $$ par le PID du shell
+* @line: chaîne d'entrée
+*
+* Return: nouvelle chaîne avec PID substitué, ou line si pas de $$
 */
 char *expand_pid(char *line)
 {
