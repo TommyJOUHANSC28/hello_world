@@ -4,30 +4,32 @@
 * @cmd: commande à chercher*,
 * Return: chemin complet si trouvé, NULL sinon
 */
-char *find_in_path(char *cmd, char **envp)
+char *find_in_path(char *cmd)
 {
-char *path = NULL, *copy = NULL, *token = NULL, *full = NULL;
-int i = 0;
+char *path, *copy, *token, *full;
+int len_cmd, len_dir;
 if (!cmd || !*cmd)
-return (NULL);
-/* récupérer PATH */
-for (i = 0; envp && envp[i]; i++)
+return NULL;
+/* Si la commande contient un '/', ne pas chercher dans PATH */
+if (_strchr(cmd, '/'))
 {
-if (_strncmp(envp[i], "PATH=", 5) == 0)
-{
-path = envp[i] + 5;
-break;
+if (access(cmd, X_OK) == 0)
+return _strdup(cmd);
+return NULL;
 }
-}
+/* Récupérer PATH depuis environ */
+path = _getenv("PATH");
 if (!path)
-return (NULL);
+return NULL;
 copy = _strdup(path);
 if (!copy)
-return (NULL);
+return NULL;
 token = _strtok(copy, ":");
+len_cmd = _strlen(cmd);
 while (token)
 {
-full = malloc(_strlen(token) + _strlen(cmd) + 2);
+len_dir = _strlen(token);
+full = malloc(len_dir + len_cmd + 2);
 if (!full)
 break;
 _strcpy(full, token);
@@ -36,11 +38,11 @@ _strcat(full, cmd);
 if (access(full, X_OK) == 0)
 {
 free(copy);
-return (full);
+return full;
 }
 free(full);
 token = _strtok(NULL, ":");
 }
-free(copy);
-return (NULL);
+free(copy)
+return NULL;
 }

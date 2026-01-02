@@ -35,7 +35,7 @@ ssize_t get_line(char **line, size_t *len);
 char *del_space(char *str);
 char **split_line(char *line);
 int exe_cmd(char *cmd, char **envp);
-char *find_in_path(char *cmd, char **envp);
+char *find_in_path(char *cmd);
 void handle_exit(char **av);
 int builtin_env(char **av);
 char *_strchr(const char *s, char c);
