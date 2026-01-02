@@ -24,9 +24,7 @@ return (0);
  */
 int builtin_cd(char **av)
 {
-char *oldpwd;
-char *newpwd;
-char *target;
+char *oldpwd, *newpwd, *target;
 char *args[4];
 oldpwd = _getcwd();
 if (!oldpwd)

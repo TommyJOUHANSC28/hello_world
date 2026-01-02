@@ -18,6 +18,7 @@ return (1);
 _strcpy(var, av[1]);
 _strcat(var, "=");
 _strcat(var, av[2]);
-putenv(var);
+if (putenv(var) != 0)
+return (1);
 return (0);
 }

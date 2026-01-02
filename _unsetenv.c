@@ -10,12 +10,14 @@
 int _unsetenv(char **av)
 {
 int i, j;
+size_t len;
 if (!av || !av[1])
 return (1);
+len = _strlen(av[1]);
 for (i = 0; environ[i]; i++)
 {
-if (_strncmp(environ[i], av[1], _strlen(av[1])) == 0 
-&& environ[i][_strlen(av[1])] == '=')
+if (_strncmp(environ[i], av[1], len) == 0 
+&& environ[i][len] == '=')
 {
 /* Décaler les variables */
 for (j = i; environ[j]; j++)
