@@ -12,63 +12,47 @@
  */
 int exe_cmd(char *cmd, char **envp)
 {
-pid_t pid;
+pid_t child;
 int status, i;
 char **av;
 char *path;
+/* 1. Gestion des opérateurs logiques et du ; */
+if (_strstr(cmd, "&&") || _strstr(cmd, "||"))
+return handle_logical(cmd, envp);
+if (_strchr(cmd, ';'))
+return handle_semicolon(cmd, envp);
+/* 2. Parsing */
 av = split_line(cmd);
 if (!av || !av[0])
-return (0);
-/* BUILTINS */
+return 0;
+/* 3. Builtins */
 if (_strcmp(av[0], "exit") == 0)
-{
-handle_exit(av);
-}
+handle_exit(av); /* handle_exit doit free(av) */
 if (_strcmp(av[0], "cd") == 0)
-{
-builtin_cd(av);
-goto clean;
-}
+return builtin_cd(av);
 if (_strcmp(av[0], "env") == 0)
-{
-builtin_env(envp);
-goto clean;
-}
-if (_strchr(cmd, ';'))
-{
-handle_semicolon(cmd, envp);
-goto clean;
-}
-if (_strstr(cmd, "&&") || _strstr(cmd, "||"))
-{
-handle_logical(cmd, envp);
-goto clean;
-}
+return builtin_env(envp);
 if (_strcmp(av[0], "alias") == 0)
-{
-builtin_alias(av);
-goto clean;
-}
+return builtin_alias(av);
 if (_strcmp(av[0], "history") == 0)
-{
-builtin_history();
-goto clean;
-}
+return builtin_history();
+/* 4. Recherche dans le PATH */
 path = find_in_path(av[0], envp);
 if (!path)
 {
-fprintf(stderr, "./hsh: %s: not found\n", av[0]);
+fprintf(stderr, "%s: %s: not found\n", SHELL_NAME, av[0]);
 last_status = 127;
 goto clean;
 }
-pid = fork();
-if (pid == 0)
+/* 5. Fork + execve */
+child = fork();
+if (child == 0)
 {
 execve(path, av, envp);
 perror("execve");
 _exit(126);
 }
-waitpid(pid, &status, 0);
+waitpid(child, &status, 0);
 if (WIFEXITED(status))
 last_status = WEXITSTATUS(status);
 free(path);
@@ -76,5 +60,5 @@ clean:
 for (i = 0; av[i]; i++)
 free(av[i]);
 free(av);
-return (last_status);
+return last_status;
 }
