@@ -29,7 +29,9 @@ while (1)
 /* Recharger le tampon si vide */
 if (buf_pos >= buf_size)
 {
+do {
 buf_size = read(STDIN_FILENO, buffer, READ_SIZE);
+} while (buf_size < 0 && errno == EINTR);
 buf_pos = 0;
 if (buf_size <= 0)
 return (i > 0 ? i : -1);
@@ -37,12 +39,12 @@ return (i > 0 ? i : -1);
 /* Agrandir la ligne si nécessaire */
 if ((size_t)i + 1 >= *len)
 {
-    size_t old = *len;
-    *len *= 2;
-    tmp = _realloc(*line, old, *len);
-    if (!tmp)
-        return (-1);
-    *line = tmp;
+size_t old = *len;
+*len *= 2;
+tmp = _realloc(*line, old, *len);
+if (!tmp)
+return (-1);
+*line = tmp;
 }
 (*line)[i] = buffer[buf_pos++];
 if ((*line)[i++] == '\n')
