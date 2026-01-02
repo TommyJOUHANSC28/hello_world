@@ -55,7 +55,7 @@ char *_getcwd(void);
 int builtin_cd(char **av);
 int builtin_exit(char **av);
 int _chdir(char *path);
-char *_getenv(const char *name, char **envp);
+char *_getenv(const char *name);
 int is_path(char *cmd);
 void sigint_handler(int sig);
 void handle_semicolon(char *line, char **envp);

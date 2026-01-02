@@ -9,16 +9,10 @@
  */
 int _setenv(char **av)
 {
-char *var;
 if (!av || !av[1] || !av[2])
 return (1);
-var = malloc(_strlen(av[1]) + _strlen(av[2]) + 2);
-if (!var)
-return (1);
-_strcpy(var, av[1]);
-_strcat(var, "=");
-_strcat(var, av[2]);
-if (putenv(var) != 0)
+/* Utilise setenv() du système, plus sûr que putenv() */
+if (setenv(av[1], av[2], 1) == -1)
 return (1);
 return (0);
 }
