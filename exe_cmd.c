@@ -18,10 +18,15 @@ char **av;
 char *path;
 /* 1. Gestion des opérateurs logiques et du ; */
 if (_strstr(cmd, "&&") || _strstr(cmd, "||"))
-return handle_logical(cmd, envp);
+{
+handle_logical(cmd, envp);
+goto clean;
+}
 if (_strchr(cmd, ';'))
-return handle_semicolon(cmd, envp);
-/* 2. Parsing */
+{
+handle_semicolon(cmd, envp);
+goto clean;
+}/* 2. Parsing */
 av = split_line(cmd);
 if (!av || !av[0])
 return 0;
@@ -29,15 +34,26 @@ return 0;
 if (_strcmp(av[0], "exit") == 0)
 handle_exit(av); /* handle_exit doit free(av) */
 if (_strcmp(av[0], "cd") == 0)
-return builtin_cd(av);
+{
+builtin_cd(av);
+goto clean;
+}
 if (_strcmp(av[0], "env") == 0)
-return builtin_env(envp);
+{
+builtin_env(envp);
+goto clean;
+}
 if (_strcmp(av[0], "alias") == 0)
-return builtin_alias(av);
+{
+builtin_alias(av);
+goto clean;
+}
 if (_strcmp(av[0], "history") == 0)
-return builtin_history();
+{
+builtin_history();
+}
 /* 4. Recherche dans le PATH */
-path = find_in_path(av[0], envp);
+path = find_in_path(av[0]);
 if (!path)
 {
 fprintf(stderr, "%s: %s: not found\n", SHELL_NAME, av[0]);
