@@ -6,7 +6,7 @@ char path[1024];
 FILE *fp;
 char *line = NULL;
 size_t len = 0;
-home = _getenv("HOME", environ);
+home = _getenv("HOME");
     if (!home)
         return;
 

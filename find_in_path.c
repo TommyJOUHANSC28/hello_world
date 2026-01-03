@@ -43,6 +43,6 @@ return full;
 free(full);
 token = _strtok(NULL, ":");
 }
-free(copy)
+free(copy);
 return NULL;
 }

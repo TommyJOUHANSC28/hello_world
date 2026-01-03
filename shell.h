@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #include <sys/types.h>
 #include <fcntl.h>
+#include <errno.h>
 
 #define READ_SIZE 1024
 extern char **environ;

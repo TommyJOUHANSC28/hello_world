@@ -4,7 +4,7 @@ void save_history(void)
 char *home;
 char path[1024];
 int fd, i;
-home = _getenv("HOME", environ);
+home = _getenv("HOME");
 if (!home)
 return;
 
