@@ -20,16 +20,22 @@ char *path;
 if (_strstr(cmd, "&&") || _strstr(cmd, "||"))
 {
 handle_logical(cmd, envp);
-goto clean;
+return (last_status);
 }
 if (_strchr(cmd, ';'))
 {
 handle_semicolon(cmd, envp);
-goto clean;
-}/* 2. Parsing */
+return (last_status);
+}
+/* 2. Parsing */
 av = split_line(cmd);
-if (!av || !av[0])
-return 0;
+if (!av)
+return (last_status);
+if (!av[0])
+{
+free(av);
+return (last_status);
+}
 /* 3. Builtins */
 if (_strcmp(av[0], "exit") == 0)
 handle_exit(av); /* handle_exit doit free(av) */
